@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظامي - بلانر علي هاني العجيري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-hover: #334155;
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding-bottom: 80px; }
+        
+        /* Header & Gamification Bar */
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; gap: 10px; }
+        .brand h1 { font-size: 1.35rem; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .brand span.sub-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; }
+        .stats-bar { display: flex; gap: 12px; align-items: center; }
+        .stat-badge {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-badge { color: var(--accent); border-color: rgba(245, 158, 11, 0.4); }
+        .lvl-badge { color: var(--primary); border-color: rgba(16, 185, 129, 0.4); }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            max-width: 1100px;
+            margin: 20px auto 0;
+            padding: 0 15px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Main Container */
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards & Grids */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .card-title { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+
+        /* Forms & Inputs */
+        input, select, textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        .btn {
+            background: var(--primary);
+            color: #0f172a;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-accent { background: var(--accent); color: #0f172a; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+
+        /* Lecture Workspace (Split View) */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .file-upload-box {
+            border: 2px dashed var(--secondary);
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: 0.2s;
+        }
+        .file-upload-box:hover { background: rgba(59, 130, 246, 0.15); }
+        .lecture-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lecture-item:hover, .lecture-item.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.08); }
+        .subject-tag {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        /* Mind Map Visual Tree */
+        .mindmap-container {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 250px;
+            overflow-x: auto;
+        }
+        .mm-root {
+            background: var(--primary);
+            color: #0f172a;
+            font-weight: 900;
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .mm-branches { list-style: none; padding-right: 20px; border-right: 2px solid var(--primary); }
+        .mm-branch { margin-bottom: 12px; position: relative; }
+        .mm-branch::before {
+            content: "";
+            position: absolute;
+            right: -20px;
+            top: 14px;
+            width: 16px;
+            height: 2px;
+            background: var(--primary);
+        }
+        .mm-node {
+            background: var(--card-bg);
+            border: 1px solid var(--secondary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 700;
+            color: #93c5fd;
+        }
+        .mm-sub { list-style: none; padding-right: 22px; margin-top: 6px; border-right: 1px dashed var(--text-muted); }
+        .mm-sub li {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+
+        /* Habits & Two-Minute Timer */
+        .habit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-dark);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .habit-row.completed { border-color: var(--primary); opacity: 0.75; }
+        .timer-pill {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        /* Flashcard 3D */
+        .flashcard {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid var(--secondary);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+            margin-bottom: 15px;
+        }
+        .flashcard:hover { transform: scale(1.01); }
+        .fc-word { font-size: 1.8rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
+        .fc-meaning { font-size: 1.2rem; color: var(--text-main); display: none; }
+        .flashcard.flipped .fc-meaning { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <div class="brand">
+            <h1>⚡ نظامي — علي هاني العجيري <span style="background:rgba(16,185,129,0.15); color:var(--primary); padding:2px 10px; border-radius:8px; font-size:0.8rem;">HUE + Atomic Habits</span></h1>
+            <span class="sub-title">كلية تكنولوجيا العلوم الصحية التطبيقية - جامعة حورس</span>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-badge lvl-badge">🏆 المستوى <span id="user-level">1</span></div>
+            <div class="stat-badge xp-badge">⭐ <span id="user-xp">0</span> XP</div>
+        </div>
+    </div>
+</header>
+
+<div class="nav-tabs" id="main-nav">
+    <button type="button" class="tab-btn active" data-tab="lectures" onclick="switchTab('lectures', this)">📚 المحاضرات والخرائط الذهنية</button>
+    <button type="button" class="tab-btn" data-tab="habits" onclick="switchTab('habits', this)">🔥 العادات اليومية (قاعدة الدقيقتين)</button>
+    <button type="button" class="tab-btn" data-tab="english" onclick="switchTab('english', this)">🇬🇧 الإنجليزية & المصطلحات الطبية</button>
+</div>
+
+<div class="container">
+
+    <!-- SECTION 1: LECTURES, SUMMARIES & MIND MAPS -->
+    <div id="sec-lectures" class="section active">
+        <div class="grid-2">
+            <!-- Left: Upload & Library -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📥 رفع محاضرة جديدة</span>
+                </div>
+                <select id="lec-subject">
+                    <option value="Human Anatomy">Human Anatomy (تشريح)</option>
+                    <option value="Biophysics">Biophysics (فيزياء حيوية)</option>
+                    <option value="Medical Terminology">Medical Terminology (مصطلحات طبية)</option>
+                    <option value="Information Technology">Information Technology (تكنولوجيا المعلومات)</option>
+                    <option value="Ethics & Professionalism">Ethics & Professionalism (أخلاقيات المهنة)</option>
+                    <option value="English (1)">English (1)</option>
+                    <option value="Innovation & Critical Thinking">Innovation & Critical Thinking</option>
+                    <option value="Social Issues">Social Issues (قضايا مجتمعية)</option>
+                </select>
+                <input type="text" id="lec-title" placeholder="عنوان المحاضرة (مثلاً: Lecture 5 - Renal System)">
+                
+                <div class="file-upload-box" onclick="document.getElementById('file-input').click()">
+                    <div style="font-size: 2rem; margin-bottom: 5px;">📄</div>
+                    <div style="font-weight: 700; color: var(--secondary);">اضغط لرفع ملف المحاضرة (PDF, TXT, MD)</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);" id="file-name-display">أو الصق نص المحاضرة بالأسفل لاستخراج الخريطة الذهنية تلقائياً</div>
+                    <input type="file" id="file-input" accept=".pdf,.txt,.md,.doc,.docx" style="display:none" onchange="handleFileUpload(event)">
+                </div>
+
+                <textarea id="lec-raw-text" rows="4" placeholder="نص المحاضرة أو النقاط الرئيسية (اكتب كل نقطة رئيسية في سطر، والفرعية بعلامة - ليتم رسم الخريطة الذهنية فوراً)..."></textarea>
+                
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn" style="flex:1; justify-content:center;" onclick="saveLecture()">💾 حفظ وتوليد الخريطة والتلخيص (+30 XP)</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="autoExtractFromText()" title="تنظيم النص تلقائياً">✨ تنظيم ذكي</button>
+                </div>
+
+                <div class="card-header" style="margin-top: 25px;">
+                    <span class="card-title">🗂️ محاضرات علي المحفوظة</span>
+                </div>
+                <div id="lectures-list"></div>
+            </div>
+
+            <!-- Right: Viewer (Summary + Mind Map + PDF Preview) -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title" id="viewer-title">🧠 مساحة المذاكرة والخرائط</span>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="setViewMode('mindmap')">🗺️ الخريطة الذهنية</button>
+                        <button type="button" class="btn btn-sm btn-accent" onclick="setViewMode('summary')">📝 التلخيص</button>
+                        <button type="button" class="btn btn-sm" id="btn-view-file" style="display:none; background:#64748b; color:white;" onclick="setViewMode('file')">📄 الملف الأصلي</button>
+                    </div>
+                </div>
+
+                <div id="workspace-empty" style="text-align:center; padding: 60px 20px; color: var(--text-muted);">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🗺️</div>
+                    <p>ارفع ملف محاضرة أو اختر محاضرة من القائمة لعرض <strong>الخريطة الذهنية التفاعلية</strong> و<strong>التلخيص المركز</strong>.</p>
+                </div>
+
+                <div id="workspace-content" style="display:none;">
+                    <!-- Mind Map View -->
+                    <div id="view-mindmap">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">خريطة مفاهيم هرمية للمراجعة السريعة قبل الفاينل (12 ديسمبر):</span>
+                            <button type="button" class="btn btn-sm" onclick="completeStudySession()">✅ أتممت مراجعة الخريطة (+50 XP)</button>
+                        </div>
+                        <div class="mindmap-container" id="mindmap-render"></div>
+                    </div>
+
+                    <!-- Summary View -->
+                    <div id="view-summary" style="display:none;">
+                        <textarea id="edit-summary-area" rows="12" style="line-height:1.8; font-size:1rem;"></textarea>
+                        <button type="button" class="btn btn-secondary" onclick="updateLectureSummary()">💾 حفظ تعديلات التلخيص</button>
+                    </div>
+
+                    <!-- File Preview View -->
+                    <div id="view-file" style="display:none;">
+                        <iframe id="pdf-frame" style="width:100%; height:450px; border:1px solid var(--border); border-radius:10px; background:white;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: HABITS & TWO-MINUTE RULE -->
+    <div id="sec-habits" class="section">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🔥 جدول عادات علي الذرية (أيام الجامعة vs أيام الأجازة)</span>
+                <select id="day-mode" style="width:auto; margin:0;" onchange="renderHabits()">
+                    <option value="uni">🏫 يوم جامعة (السبت - الثلاثاء)</option>
+                    <option value="off">🏠 يوم أجازة (الأربعاء - الجمعة)</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="text" id="new-habit-title" placeholder="أضف عادة جديدة (مثلاً: مراجعة محاضرة أناتومي أو تمرين كيك بوكسينج)..." style="margin:0;">
+                <button type="button" class="btn" onclick="addHabit()">➕ إضافة</button>
+            </div>
+
+            <div id="habits-container"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: ENGLISH & MEDICAL TERMS -->
+    <div id="sec-english" class="section">
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🃏 بطاقات المراجعة السريعة (Flashcards)</span>
+                    <span class="subject-tag" id="fc-counter">1 / 1</span>
+                </div>
+                <div class="flashcard" id="flashcard-box" onclick="this.classList.toggle('flipped')">
+                    <div class="fc-word" id="fc-front">Hemodialysis</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">(اضغط لقلب البطاقة أو استمع للنطق)</div>
+                    <div class="fc-meaning" id="fc-back">الغسيل الكلوي الدموي (تنقية الدم خارج الجسم)</div>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-secondary" onclick="speakWord()">🔊 استماع للنطق</button>
+                    <button type="button" class="btn" onclick="nextCard(true)">✅ أعرفها (+15 XP)</button>
+                    <button type="button" class="btn btn-accent" onclick="nextCard(false)">🔄 أحتاج مراجعة</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">➕ أضف مصطلح طبي أو كلمة A2 جديدة</span>
+                </div>
+                <input type="text" id="new-fc-en" placeholder="الكلمة أو المصطلح بالإنجليزية (مثال: Nephron)">
+                <input type="text" id="new-fc-ar" placeholder="المعنى أو الشرح بالعربية (مثال: الوحدة الوظيفية للكلية)">
+                <button type="button" class="btn" style="width:100%; justify-content:center;" onclick="addFlashcard()">💾 إضافة للبطاقات (+10 XP)</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    const defaultState = {
+        xp: 120,
+        lectures: [
+            {
+                id: 1,
+                subject: "Biophysics",
+                title: "Artificial Kidney & Hemodialysis",
+                summary: "مبادئ عمل الكلية الصناعية:\n- الانتشار (Diffusion): انتقال السموم مثل اليوريا والكرياتينين من الدم ذي التركيز العالي إلى سائل الديلزة ذي التركيز المنخفض.\n- الترشيح الفائق (Ultrafiltration): سحب السوائل الزائدة باستخدام فرق الضغط الهيدروستاتيكي.\n- الغشاء شبه المنفذ (Semipermeable Membrane): يسمح بمرور الجزيئات الصغيرة ويمنع مرور خلايا الدم والبروتينات.",
+                fileUrl: null,
+                fileName: "Biophysics_Dialysis.pdf"
+            },
+            {
+                id: 2,
+                subject: "Human Anatomy",
+                title: "Introduction to Skeletal System",
+                summary: "الجهاز الهيكلي في الإنسان:\n- الهيكل المحوري (Axial Skeleton): يشمل الجمجمة والعمود الفقري والقفص الصدري.\n- الهيكل الطرفي (Appendicular Skeleton): يشمل عظام الأطراف العلوية والسفلية والأحزمة.\n- وظائف العظام: الدعامة، الحماية، الحركة، وتكوين خلايا الدم في النخاع الأحمر.",
+                fileUrl: null,
+                fileName: "Anatomy_Lec1.pdf"
+            }
+        ],
+        habits: {
+            uni: [
+                { id: 101, title: "مذاكرة محاضرات اليوم (ساعة تركيز)", fallback: "مراجعة الخريطة الذهنية لمدة دقيقتين فقط", done: false },
+                { id: 102, title: "تسميع 15 مصطلح طبي / إنجليزي A2", fallback: "مراجعة 3 بطاقات فقط", done: false },
+                { id: 103, title: "تمرين جيم أو كيك بوكسينج + مكملات", fallback: "تمرين بطن وضغط لمدة دقيقتين بالمنزل", done: false }
+            ],
+            off: [
+                { id: 201, title: "مراجعة شاملة لمادتين من مواد الفاينل", fallback: "تلخيص صفحة واحدة في خريطة ذهنية", done: false },
+                { id: 202, title: "تطبيق عملي Excel & تحليل بيانات", fallback: "مراجعة معادلة واحدة لمدة دقيقتين", done: false },
+                { id: 203, title: "قراءة كتاب جدد حياتك (15 صفحة)", fallback: "قراءة صفحة واحدة قبل النوم", done: false }
+            ]
+        },
+        flashcards: [
+            { en: "Hemodialysis", ar: "الغسيل الكلوي الدموي" },
+            { en: "Radiology", ar: "علم الأشعة والتصوير الطبي" },
+            { en: "Diffusion", ar: "الانتشار (انتقال الجزيئات من التركيز الأعلى للأقل)" },
+            { en: "Consistency", ar: "الاستمرارية والانتظام" }
+        ]
+    };
+
+    let state;
+    try {
+        const saved = localStorage.getItem('nizami_ali_v4');
+        state = saved ? JSON.parse(saved) : defaultState;
+    } catch (e) {
+        state = defaultState;
+    }
+
+    let currentLectureId = null;
+    let currentCardIndex = 0;
+    let activeTimers = {};
+
+    function saveState() {
+        try {
+            localStorage.setItem('nizami_ali_v4', JSON.stringify(state));
+        } catch (e) {}
+        updateHeaderStats();
+    }
+
+    function addXP(amount) {
+        state.xp += amount;
+        saveState();
+    }
+
+    function updateHeaderStats() {
+        document.getElementById('user-xp').textContent = state.xp;
+        document.getElementById('user-level').textContent = Math.floor(state.xp / 200) + 1;
+    }
+
+    // --- TABS (FIXED & RELIABLE) ---
+    function switchTab(tabName, btnElement) {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(s => s.classList.remove('active'));
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+
+        const targetSection = document.getElementById('sec-' + tabName);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+        if (btnElement) {
+            btnElement.classList.add('active');
+        }
+    }
+
+    // --- FILE UPLOAD & SMART EXTRACTION ---
+    let uploadedFileUrl = null;
+    let uploadedFileName = "";
+
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        uploadedFileName = file.name;
+        document.getElementById('file-name-display').textContent = "✅ تم إرفاق: " + file.name;
+        
+        if (!document.getElementById('lec-title').value) {
+            document.getElementById('lec-title').value = file.name.replace(/\.[^/.]+$/, "");
+        }
+
+        if (file.type === "application/pdf") {
+            uploadedFileUrl = URL.createObjectURL(file);
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('lec-raw-text').value = e.target.result.substring(0, 3000);
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function autoExtractFromText() {
+        const raw = document.getElementById('lec-raw-text').value.trim();
+        if (!raw) {
+            alert("الصق نص المحاضرة أولاً ليتم تنظيمه إلى نقاط رئيسية وفرعية!");
+            return;
+        }
+        const lines = raw.split(/\n+/).map(l => l.trim()).filter(l => l.length > 0);
+        let formatted = "";
+        lines.forEach(line => {
+            if (line.endsWith(':') || line.length < 45) {
+                formatted += "\n" + line.replace(':', '') + ":\n";
+            } else {
+                formatted += "- " + line + "\n";
+            }
+        });
+        document.getElementById('lec-raw-text').value = formatted.trim();
+    }
+
+    function saveLecture() {
+        const subject = document.getElementById('lec-subject').value;
+        const title = document.getElementById('lec-title').value.trim();
+        const summary = document.getElementById('lec-raw-text').value.trim();
+
+        if (!title) {
+            alert("يرجى إدخال عنوان المحاضرة يا علي.");
+            return;
+        }
+
+        const newLec = {
+            id: Date.now(),
+            subject,
+            title,
+            summary: summary || (title + ":\n- نقطة أساسية 1\n- نقطة أساسية 2"),
+            fileUrl: uploadedFileUrl,
+            fileName: uploadedFileName
+        };
+
+        state.lectures.unshift(newLec);
+        addXP(30);
+        renderLecturesList();
+        openLecture(newLec.id);
+
+        document.getElementById('lec-title').value = "";
+        document.getElementById('lec-raw-text').value = "";
+        document.getElementById('file-name-display').textContent = "أو الصق نص المحاضرة بالأسفل لاستخراج الخريطة الذهنية تلقائياً";
+        uploadedFileUrl = null;
+        uploadedFileName = "";
+    }
+
+    function renderLecturesList() {
+        const container = document.getElementById('lectures-list');
+        container.innerHTML = "";
+        state.lectures.forEach(lec => {
+            const div = document.createElement('div');
+            div.className = `lecture-item ${lec.id === currentLectureId ? 'selected' : ''}`;
+            div.onclick = () => openLecture(lec.id);
+            div.innerHTML = `
+                <div>
+                    <span class="subject-tag">${lec.subject}</span>
+                    <div style="font-weight:700; margin-top:4px;">${lec.title}</div>
+                    ${lec.fileName ? `<div style="font-size:0.75rem; color:var(--text-muted);">📎 ${lec.fileName}</div>` : ''}
+                </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteLecture(event, ${lec.id})">🗑️</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function deleteLecture(e, id) {
+        e.stopPropagation();
+        state.lectures = state.lectures.filter(l => l.id !== id);
+        if (currentLectureId === id) {
+            document.getElementById('workspace-empty').style.display = 'block';
+            document.getElementById('workspace-content').style.display = 'none';
+        }
+        saveState();
+        renderLecturesList();
+    }
+
+    function openLecture(id) {
+        currentLectureId = id;
+        const lec = state.lectures.find(l => l.id === id);
+        if (!lec) return;
+
+        renderLecturesList();
+        document.getElementById('workspace-empty').style.display = 'none';
+        document.getElementById('workspace-content').style.display = 'block';
+        document.getElementById('viewer-title').textContent = `${lec.subject} | ${lec.title}`;
+        document.getElementById('edit-summary-area').value = lec.summary;
+
+        const fileBtn = document.getElementById('btn-view-file');
+        if (lec.fileUrl) {
+            fileBtn.style.display = 'inline-flex';
+            document.getElementById('pdf-frame').src = lec.fileUrl;
+        } else {
+            fileBtn.style.display = 'none';
+        }
+
+        renderMindMap(lec.title, lec.summary);
+        setViewMode('mindmap');
+    }
+
+    function setViewMode(mode) {
+        document.getElementById('view-mindmap').style.display = mode === 'mindmap' ? 'block' : 'none';
+        document.getElementById('view-summary').style.display = mode === 'summary' ? 'block' : 'none';
+        document.getElementById('view-file').style.display = mode === 'file' ? 'block' : 'none';
+    }
+
+    function renderMindMap(rootTitle, text) {
+        const container = document.getElementById('mindmap-render');
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        
+        let html = `<div class="mm-root">🎯 ${rootTitle}</div><ul class="mm-branches">`;
+        let currentBranchOpen = false;
+
+        lines.forEach(line => {
+            if (line.startsWith('-') || line.startsWith('*') || line.startsWith('•')) {
+                const cleanSub = line.replace(/^[-*•]\s*/, '');
+                if (!currentBranchOpen) {
+                    html += `<li class="mm-branch"><div class="mm-node">📌 مفاهيم أساسية</div><ul class="mm-sub">`;
+                    currentBranchOpen = true;
+                }
+                html += `<li>🔹 ${cleanSub}</li>`;
+            } else {
+                if (currentBranchOpen) {
+                    html += `</ul></li>`;
+                }
+                html += `<li class="mm-branch"><div class="mm-node">🌿 ${line.replace(':', '')}</div><ul class="mm-sub">`;
+                currentBranchOpen = true;
+            }
+        });
+
+        if (currentBranchOpen) html += `</ul></li>`;
+        html += `</ul>`;
+        container.innerHTML = html;
+    }
+
+    function updateLectureSummary() {
+        const lec = state.lectures.find(l => l.id === currentLectureId);
+        if (!lec) return;
+        lec.summary = document.getElementById('edit-summary-area').value;
+        saveState();
+        renderMindMap(lec.title, lec.summary);
+        alert("تم تحديث التلخيص والخريطة الذهنية بنجاح!");
+    }
+
+    function completeStudySession() {
+        addXP(50);
+        alert("عاش يا علي! تم إضافة +50 XP لإتمام مراجعة الخريطة الذهنية.");
+    }
+
+    // --- HABITS & TWO-MINUTE TIMER ---
+    function renderHabits() {
+        const mode = document.getElementById('day-mode').value;
+        const container = document.getElementById('habits-container');
+        container.innerHTML = "";
+
+        state.habits[mode].forEach(h => {
+            const row = document.createElement('div');
+            row.className = `habit-row ${h.done ? 'completed' : ''}`;
+            row.innerHTML = `
+                <div style="flex:1;">
+                    <div style="font-weight:700; font-size:1.05rem; ${h.done ? 'text-decoration:line-through; color:var(--primary);' : ''}">${h.title}</div>
+                    <div style="font-size:0.8rem; color:var(--accent);">⚡ خطة الطوارئ (دقيقتين): ${h.fallback}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <span class="timer-pill" id="timer-${h.id}">02:00</span>
+                    <button type="button" class="btn btn-sm btn-accent" onclick="startTwoMinTimer(${h.id})">⏱️ ابدأ دقيقتين</button>
+                    <button type="button" class="btn btn-sm ${h.done ? 'btn-secondary' : ''}" onclick="toggleHabit('${mode}', ${h.id})">
+                        ${h.done ? '↩️ تراجع' : '✅ تم'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function startTwoMinTimer(id) {
+        if (activeTimers[id]) return;
+        let seconds = 120;
+        const display = document.getElementById(`timer-${id}`);
+        activeTimers[id] = setInterval(() => {
+            seconds--;
+            const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            if (display) display.textContent = `${m}:${s}`;
+            if (seconds <= 0) {
+                clearInterval(activeTimers[id]);
+                delete activeTimers[id];
+                addXP(20);
+                alert("انتهت الدقيقتان يا علي! كسرت حاجز التسويف وحصلت على +20 XP. اضغط 'تم' لتأكيد الإنجاز.");
+            }
+        }, 1000);
+    }
+
+    function toggleHabit(mode, id) {
+        const habit = state.habits[mode].find(h => h.id === id);
+        if (!habit) return;
+        habit.done = !habit.done;
+        if (habit.done) addXP(25);
+        saveState();
+        renderHabits();
+    }
+
+    function addHabit() {
+        const mode = document.getElementById('day-mode').value;
+        const title = document.getElementById('new-habit-title').value.trim();
+        if (!title) return;
+        state.habits[mode].push({
+            id: Date.now(),
+            title,
+            fallback: "ابدأ بأصغر خطوة لمدة دقيقتين فقط",
+            done: false
+        });
+        document.getElementById('new-habit-title').value = "";
+        saveState();
+        renderHabits();
+    }
+
+    // --- FLASHCARDS & SPEECH ---
+    function renderFlashcard() {
+        const card = state.flashcards[currentCardIndex];
+        document.getElementById('flashcard-box').classList.remove('flipped');
+        document.getElementById('fc-front').textContent = card.en;
+        document.getElementById('fc-back').textContent = card.ar;
+        document.getElementById('fc-counter').textContent = `${currentCardIndex + 1} / ${state.flashcards.length}`;
+    }
+
+    function nextCard(known) {
+        if (known) addXP(15);
+        currentCardIndex = (currentCardIndex + 1) % state.flashcards.length;
+        renderFlashcard();
+    }
+
+    function addFlashcard() {
+        const en = document.getElementById('new-fc-en').value.trim();
+        const ar = document.getElementById('new-fc-ar').value.trim();
+        if (!en || !ar) return;
+        state.flashcards.push({ en, ar });
+        document.getElementById('new-fc-en').value = "";
+        document.getElementById('new-fc-ar').value = "";
+        addXP(10);
+        renderFlashcard();
+    }
+
+    function speakWord() {
+        const word = state.flashcards[currentCardIndex].en;
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // INIT
+    updateHeaderStats();
+    renderLecturesList();
+    renderHabits();
+    renderFlashcard();
+    if (state.lectures.length > 0) openLecture(state.lectures[0].id);
+</script>
+
+</body>
+</html>
